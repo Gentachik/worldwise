@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   MapContainer,
   Popup,
@@ -7,11 +7,12 @@ import {
   useMap,
   useMapEvents,
 } from "react-leaflet";
-import { useGeolocation } from "../hooks/useGeolocation";
 import { useEffect, useState } from "react";
-import { useCities } from "./CitiesContex";
+import { useCities } from "../contex/CitiesContex";
 import styles from "./Map.module.css";
 import Button from "./Button";
+import { useGeolocation } from "../hooks/useGeolocation";
+import { useUrlPosition } from "../hooks/useUrlPosition";
 
 const flagemojiToPNG = (flag) => {
   var countryCode = Array.from(flag, (codeUnit) => codeUnit.codePointAt())
@@ -23,17 +24,15 @@ const flagemojiToPNG = (flag) => {
 };
 function Map() {
   const [mapPosition, setMapPosition] = useState([40, 0]);
-  const [searchParams] = useSearchParams();
   const {
     isLoading: isLoadingPosition,
     position: geolocationPosition,
     getPosition,
   } = useGeolocation();
 
-  const { cities } = useCities();
+  const [mapLat, mapLng] = useUrlPosition();
 
-  const mapLat = searchParams.get("lat");
-  const mapLng = searchParams.get("lng");
+  const { cities } = useCities();
 
   useEffect(
     function () {
